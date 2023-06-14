@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import starfile
 from scipy.spatial import cKDTree
 
-# Dataframes contain .star files from template matching as df with x,y,z coords. 
+# Dataframes contain .star files from template matching as df
 
 trees = {}
 pixel_size = 7.84  # bin4 pixel size
