@@ -20,3 +20,15 @@ for key, df in enumerate(dataframes):
 
     mean_distances[key] = {k: np.mean(distances_dict[key][f'distance_k{k}']) for k in k_values}
     median_distances[key] = {k: np.median(distances_dict[key][f'distance_k{k}']) for k in k_values}
+
+
+# Angular analysis
+
+cos_values = []
+
+for i, neighbors_indices in enumerate(neighbors):
+    particle_angles = df631.loc[[i], ['phi', 'psi', 'the']].values
+    neighbor_angles = df631.loc[neighbors_indices[1:], ['phi', 'psi', 'the']].values  # Exclude the particle itself
+    cos_angles = np.cos(np.deg2rad(neighbor_angles - particle_angles))
+    cos_values.append(cos_angles)
+
