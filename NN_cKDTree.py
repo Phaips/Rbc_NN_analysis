@@ -24,12 +24,14 @@ for key, df in enumerate(dataframes):
 
 # Angular analysis
 
-cos_values = []
+dfcos = {}
 
 for key, df in enumerate(dataframes):
+    cos_values = []
     for i, neighbors_indices in enumerate(neighbors):
         particle_angles = df.loc[[i], ['phi', 'psi', 'the']].values
         neighbor_angles = df.loc[neighbors_indices[1:], ['phi', 'psi', 'the']].values  # Exclude the particle itself
         cos_angles = np.cos(np.deg2rad(neighbor_angles - particle_angles))
         cos_values.append(cos_angles)
+    dfcos[key] = cos_values
 
