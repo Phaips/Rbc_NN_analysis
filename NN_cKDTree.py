@@ -7,7 +7,7 @@ from scipy.spatial import cKDTree
 
 trees = {}
 pixel_size = 7.84  # bin4 pixel size
-k_values = range(2, 14)  # 12 NN
+k_values = range(2, 13)  # 12 NN
 distances_dict = {}
 mean_distances = {}
 median_distances = {}
