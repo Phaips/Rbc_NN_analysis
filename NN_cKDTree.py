@@ -16,7 +16,7 @@ trees = {}
 
 # Set tomo pixel size and number of nearest neighbors (NN)
 pixel_size = 7.84  # bin4 pixel size for example
-k_values = range(2, 13)  # 12 NN's (can set to k=2 for NN)
+k_values = range(2, 13)  # 12 NN's (can set k=2 for NN)
 
 distances_dict = {}
 
