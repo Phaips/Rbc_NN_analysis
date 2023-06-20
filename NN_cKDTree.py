@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import starfile
 from scipy.spatial import cKDTree
 
-# Dataframes contain .star files from template matching as df
+# Dataframes contain .star files from template matching
 
 # For example like this: 
 # dataframes = {}
