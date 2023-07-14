@@ -4,8 +4,12 @@ import starfile
 from scipy.spatial import cKDTree
 
 # Dataframes contain .star files from template matching
-
+# file_numbers usually refer to your Tomograms 1.rec, 2.rec,.., etc.
 # For example like this: 
+
+# file_numbers = ["1", "2", "3", "4"]
+# list_path = ".../tomo_path/templateMatching/TM_bin4_"
+# path = [list_path + file_number + ".star" for file_number in file_numbers]
 # dataframes = {}
 # for file_number, file_path in zip(file_numbers, path):
 #    df = starfile.read(file_path)
