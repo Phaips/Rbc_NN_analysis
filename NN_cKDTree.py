@@ -20,7 +20,7 @@ for tomo_num in unique_tomo_nums:
 
 # calculate the distance between two angles
 def angular_difference(angle1, angle2):
-    diff = np.abs(angle1 - angle2) % 360
+    diff = np.abs(angle1 - angle2) % 360 # apparently STOPGAP phi angles are not mod 360 (??)
     wrap = np.minimum(diff, 360 - diff) # if 10° and 350° you want 20° and not -340° (D4 symmetry sucks)
     return(wrap)
     
@@ -34,7 +34,6 @@ angle_index = 2
 #initialize dicts
 angles_dict = {}
 distances_dict = {}
-mean_distances = {}
 
 for key, df in dataframes.items():
     coords = df[['orig_x', 'orig_y', 'orig_z']].values * pixel_size
@@ -46,13 +45,14 @@ for key, df in dataframes.items():
     angles_dict[key] = {}
     distances_dict[key] = {}
     for k in k_values:
+        # NN distance
+        distances_dict[key][f'distance_k{k}'] = distances[:, k-1]
         # find angle of nearest neighbors
         neighbor_indices = neighbors[:, k - 1]
         neighbor_angles = euler_angles[neighbor_indices]
         #calculate their difference
         angle_diffs = calculate_angle_diffs(euler_angles, neighbor_angles, angle_index)
         angles_dict[key][f'angle_diff_{angle_index}_k{k}'] = angle_diffs
-        distances_dict[key][f'distance_k{k}'] = distances[:, k-1]
 
 
 
