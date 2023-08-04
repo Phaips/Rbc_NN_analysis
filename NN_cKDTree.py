@@ -57,7 +57,13 @@ for key, df in dataframes.items():
 
 
 """
-PLOT THE NN DISTANCES AND ANGLE DIFFERENCE
+# PLOT THE NN DISTANCES AND ANGLE DIFFERENCE
+
+colormap_name = 'tab10'
+colormap = plt.get_cmap(colormap_name)
+
+num_colors_needed = len(k_values)
+colors = [colormap(i) for i in range(num_colors_needed)]
 
 for i, (key, df) in enumerate(dataframes.items()):
     fig, axs = plt.subplots(1, 2, figsize=(12, 4))
