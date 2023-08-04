@@ -67,36 +67,39 @@ colors = [colormap(i) for i in range(num_colors_needed)]
 
 import seaborn as sns
 for i, (key, df) in enumerate(dataframes.items()):
-    fig, axs = plt.subplots(1, 2, figsize=(12, 4))
+    # Create a 1x4 grid of subplots (1 row, 4 columns) for each key
+    fig, axs = plt.subplots(1, 4, figsize=(16, 4))  # Adjust figsize if needed
 
-    # Plot the density plot for distances (Improved Visualization)
-    ax_distances = axs[0]
+    # Plot the density plot for distances and overlay for different k values (Improved Visualization)
+    ax_distance = axs[0]
     for j, k in enumerate(k_values):
         color = colors[j]
         sns.kdeplot(
             distances_dict[key][f'distance_k{k}'], 
-            color=color, label=f'k={k}', ax=ax_distances
+            color=color, label=f'k={k}', ax=ax_distance
         )
-    
-    ax_distances.set_xlabel('Distance to Nearest Neighbor (Å)')
-    ax_distances.set_ylabel('Density')
-    ax_distances.set_title(f'{key}')
-    ax_distances.legend(loc='upper right')
+    ax_distance.set_xlabel('Distance to Nearest Neighbor (Å)')
+    ax_distance.set_ylabel('Density')
+    ax_distance.set_title(f'{key} - Distance')
+    ax_distance.legend(loc='upper right')
 
-    # Plot the density plot for selected angle (Improved Visualization)
-    ax_angles = axs[1]
-    for j, k in enumerate(k_values):
-        color = colors[j]
-        sns.kdeplot(
-            angles_dict[key][f'angle_diff_{angle_index}_k{k}'], 
-            color=color, label=f'k={k}', ax=ax_angles
-        )
-    
-    ax_angles.set_xlabel('Angular Difference')
-    ax_angles.set_ylabel('Density')
-    ax_angles.set_title(f'{key}')
-    ax_angles.legend(loc='upper right')
+    # Plot the density plot for each angle index and overlay the angle differences for different k values
+    for angle_idx in range(3):  # Loop through angle indices 0, 1, and 2
+        ax = axs[angle_idx + 1]  # Select the appropriate subplot for the angle index
+        ax.set_xlabel('Angular Difference')
+        ax.set_ylabel('Density')
+        ax.set_title(f'{key} - {["Phi", "Psi", "Theta"][angle_idx]} Differences')
+        
+        for j, k in enumerate(k_values):
+            color = colors[j]
+            sns.kdeplot(
+                angles_dict[key][f'angle_diff_{angle_idx}_k{k}'], 
+                color=color, label=f'k={k}', ax=ax
+            )
+        
+        ax.legend(loc='upper right')
 
+    # Adjust spacing and layout
     plt.tight_layout()
     plt.show()
 
