@@ -30,10 +30,11 @@ def calculate_angle_diffs(euler_angles, neighbor_angles, angle_index):
 angle_index = 2 
 
 # Initialize dicts using list comprehensions
-angles_dict = {key: {f'angle_diff_{angle_idx}_k{k}': calculate_angle_diffs(euler_angles, euler_angles[neighbors[:, k - 1]],
-                                                                           angle_idx) for angle_idx in range(3) for k in k_values} for key, (coords, euler_angles, neighbors) in zip(dataframes.keys(),
-                                                                           [(df[['orig_x', 'orig_y', 'orig_z']].values * pixel_size, df[['phi', 'psi', 'the']].values,
-                                                                            cKDTree(df[['orig_x', 'orig_y', 'orig_z']].values * pixel_size).query(df[['orig_x', 'orig_y', 'orig_z']].values * pixel_size, k=max(k_values))[1]) for df in dataframes.values()])}
+angles_dict = {key: {f'angle_diff_{angle_idx}_k{k}': 
+                     calculate_angle_diffs(euler_angles, euler_angles[neighbors[:, k - 1]],
+                        angle_idx) for angle_idx in range(3) for k in k_values} for key, (coords, euler_angles, neighbors) in zip(dataframes.keys(),
+                            [(df[['orig_x', 'orig_y', 'orig_z']].values * pixel_size, df[['phi', 'psi', 'the']].values,
+                                cKDTree(df[['orig_x', 'orig_y', 'orig_z']].values * pixel_size).query(df[['orig_x', 'orig_y', 'orig_z']].values * pixel_size, k=max(k_values))[1]) for df in dataframes.values()])}
 distances_dict = {key: {f'distance_k{k}': distances[:, k-1] for k in k_values} for key, 
                   distances in zip(dataframes.keys(),
                     [cKDTree(df[['orig_x', 'orig_y', 'orig_z']].values * pixel_size).query(df[['orig_x', 'orig_y', 'orig_z']].values * pixel_size,
