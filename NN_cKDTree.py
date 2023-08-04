@@ -65,34 +65,35 @@ colormap = plt.get_cmap(colormap_name)
 num_colors_needed = len(k_values)
 colors = [colormap(i) for i in range(num_colors_needed)]
 
+import seaborn as sns
 for i, (key, df) in enumerate(dataframes.items()):
     fig, axs = plt.subplots(1, 2, figsize=(12, 4))
 
-    # Plot the histogram for distances
+    # Plot the density plot for distances (Improved Visualization)
     ax_distances = axs[0]
     for j, k in enumerate(k_values):
         color = colors[j]
-        ax_distances.hist(
+        sns.kdeplot(
             distances_dict[key][f'distance_k{k}'], 
-            bins=50, color=color, alpha=0.5, label=f'k={k}'
+            color=color, label=f'k={k}', ax=ax_distances
         )
     
     ax_distances.set_xlabel('Distance to Nearest Neighbor (Å)')
-    ax_distances.set_ylabel('Particle number')
+    ax_distances.set_ylabel('Density')
     ax_distances.set_title(f'{key}')
     ax_distances.legend(loc='upper right')
 
-    # Plot the histogram for selected angle
+    # Plot the density plot for selected angle (Improved Visualization)
     ax_angles = axs[1]
     for j, k in enumerate(k_values):
         color = colors[j]
-        ax_angles.hist(
+        sns.kdeplot(
             angles_dict[key][f'angle_diff_{angle_index}_k{k}'], 
-            bins=50, color=color, alpha=0.5, label=f'k={k}'
+            color=color, label=f'k={k}', ax=ax_angles
         )
     
     ax_angles.set_xlabel('Angular Difference')
-    ax_angles.set_ylabel('Frequency')
+    ax_angles.set_ylabel('Density')
     ax_angles.set_title(f'{key}')
     ax_angles.legend(loc='upper right')
 
