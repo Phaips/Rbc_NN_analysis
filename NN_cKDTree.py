@@ -4,7 +4,7 @@ import starfile
 from scipy.spatial import cKDTree
 import seaborn as sns
 
-# pixelsize of your tomo
+# pixelsize of your tomo (here bin4)
 pixel_size = 7.84
 # number of nearest neighbors (k=2 here)
 k_values = range(2, 4) 
