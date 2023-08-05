@@ -53,8 +53,20 @@ for key, df in dataframes.items():
 
 
 """"
-# PLOT THE NN DISTANCES AND ANGLE DIFFERENCE
+# Nematic (orientation) order parameter
+def orientation(angles):
+    nematic = np.mean((3 * np.cos(angles)**2 - 1) / 2)
+    return(nematic)
 
+for tomo_num in unique_tomo_nums:
+    print('order phi'f'{tomo_num}__:' , orientation(dataframes[f'df{tomo_num}']['phi']))
+    print('order psi'f'{tomo_num}__:' , orientation(dataframes[f'df{tomo_num}']['psi']))
+    print('order theta'f'{tomo_num}:' , orientation(dataframes[f'df{tomo_num}']['the']))
+    # print('order phi' f'{tomo_num}:' , orientation(dataframes[f'df{tomo_num}']['phi']))
+
+
+
+# PLOT THE NN DISTANCES AND ANGLE DIFFERENCE
 colormap_name = 'tab10'
 colormap = plt.get_cmap(colormap_name)
 
