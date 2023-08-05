@@ -29,7 +29,6 @@ def calculate_angle_diffs(euler_angles, neighbor_angles, angle_index):
 
 angles_dict = {}
 distances_dict = {}
-mean_distances = {}
 
 for key, df in dataframes.items():
     coords = df[['orig_x', 'orig_y', 'orig_z']].values * pixel_size
@@ -49,8 +48,6 @@ for key, df in dataframes.items():
             angle_key = f'angle_diff_{angle_idx}_k{k}'
             angle_diffs = calculate_angle_diffs(euler_angles, neighbor_angles, angle_idx)
             angles_dict[key][angle_key] = angle_diffs
-
-
 
 """"
 # Nematic (orientation) order parameter (2nd Legendre polynomial)
