@@ -22,23 +22,35 @@ def angular_difference(angle1, angle2):
     wrap = np.minimum(diff, 360 - diff)
     return wrap
 
-# you have 3 angles, this function allows to chose index 0,1,2 for phi,psi,theta respectively
+# To calculate and plot a specific angle
+# idx 0 for phi, 1 for psi, 2 for theta
 def calculate_angle_diffs(euler_angles, neighbor_angles, angle_index):
     return angular_difference(euler_angles[:, angle_index], neighbor_angles[:, angle_index])
 
-# 0 for phi, 1 for psi, 2 for theta
-angle_index = 2 
+angles_dict = {}
+distances_dict = {}
+mean_distances = {}
 
-# Initialize dicts using list comprehensions
-angles_dict = {key: {f'angle_diff_{angle_idx}_k{k}': 
-                     calculate_angle_diffs(euler_angles, euler_angles[neighbors[:, k - 1]],
-                        angle_idx) for angle_idx in range(3) for k in k_values} for key, (coords, euler_angles, neighbors) in zip(dataframes.keys(),
-                            [(df[['orig_x', 'orig_y', 'orig_z']].values * pixel_size, df[['phi', 'psi', 'the']].values,
-                                cKDTree(df[['orig_x', 'orig_y', 'orig_z']].values * pixel_size).query(df[['orig_x', 'orig_y', 'orig_z']].values * pixel_size, k=max(k_values))[1]) for df in dataframes.values()])}
-distances_dict = {key: {f'distance_k{k}': distances[:, k-1] for k in k_values} for key, 
-                  distances in zip(dataframes.keys(),
-                    [cKDTree(df[['orig_x', 'orig_y', 'orig_z']].values * pixel_size).query(df[['orig_x', 'orig_y', 'orig_z']].values * pixel_size,
-                        k=max(k_values))[0] for df in dataframes.values()])}
+for key, df in dataframes.items():
+    coords = df[['orig_x', 'orig_y', 'orig_z']].values * pixel_size
+    euler_angles = df[['phi', 'psi', 'the']].values
+    tree = cKDTree(coords)
+    distances, neighbors = tree.query(coords, k=max(k_values))
+    
+    angles_dict[key] = {}
+    distances_dict[key] = {}
+    for k in k_values:
+        distances_dict[key][f'distance_k{k}'] = distances[:, k-1]
+        
+        neighbor_indices = neighbors[:, k - 1]
+        neighbor_angles = euler_angles[neighbor_indices]
+        
+        for angle_idx in range(3):  # Loop through angle indices 0, 1, and 2
+            angle_key = f'angle_diff_{angle_idx}_k{k}'
+            angle_diffs = calculate_angle_diffs(euler_angles, neighbor_angles, angle_idx)
+            angles_dict[key][angle_key] = angle_diffs
+
+
 
 """"
 # PLOT THE NN DISTANCES AND ANGLE DIFFERENCE
