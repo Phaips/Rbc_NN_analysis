@@ -6,8 +6,8 @@ import seaborn as sns
 
 # pixelsize of your tomo (here bin4)
 pixel_size = 7.84
-# number of nearest neighbors (k=2 here)
-k_values = range(2, 4) 
+# number of nearest neighbors (k=2 here nearest neighbor). range(2,4) would be nearest and second nearest (k=3)
+k_values = range(2, 3) 
 
 # load your motl (.star file)
 path = "../your/path/motl.star"
