@@ -22,8 +22,7 @@ def angular_difference(angle1, angle2):
     wrap = np.minimum(diff, 360 - diff) # if 10° and 350° we want it to be 20° and not 340° :)
     return wrap
 
-# To calculate and plot a specific angle
-# idx 0 for phi, 1 for psi, 2 for theta
+# slicing the array to loop through the angles: angle_idx 0 for phi, 1 for psi, 2 for theta
 def calculate_angle_diffs(euler_angles, neighbor_angles, angle_index):
     return angular_difference(euler_angles[:, angle_index], neighbor_angles[:, angle_index])
 
