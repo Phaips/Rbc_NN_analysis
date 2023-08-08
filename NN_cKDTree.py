@@ -26,6 +26,8 @@ def angular_difference(angle1, angle2):
 def calculate_angle_diffs(euler_angles, neighbor_angles, angle_index):
     return angular_difference(euler_angles[:, angle_index], neighbor_angles[:, angle_index])
 
+# initialize dictionaries
+# find nearest neighbors using k-d-tree (space partitioning, binary trees are fast!)
 angles_dict = {}
 distances_dict = {}
 
@@ -38,12 +40,12 @@ for key, df in dataframes.items():
     angles_dict[key] = {}
     distances_dict[key] = {}
     for k in k_values:
-        distances_dict[key][f'distance_k{k}'] = distances[:, k-1]
+        distances_dict[key][f'distance_k{k}'] = distances[:, k-1] # we start counting from 0
         
         neighbor_indices = neighbors[:, k - 1]
         neighbor_angles = euler_angles[neighbor_indices]
         
-        for angle_idx in range(3):  # Loop through angle indices 0, 1, and 2
+        for angle_idx in range(3):
             angle_key = f'angle_diff_{angle_idx}_k{k}'
             angle_diffs = calculate_angle_diffs(euler_angles, neighbor_angles, angle_idx)
             angles_dict[key][angle_key] = angle_diffs
