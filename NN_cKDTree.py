@@ -18,8 +18,8 @@ dataframes = {f"df{tomo_num}": df.reset_index(drop=True) for tomo_num, df in tom
 
 # calculate the distance between two angles
 def angular_difference(angle1, angle2):
-    diff = np.abs(angle1 - angle2) % 360
-    wrap = np.minimum(diff, 360 - diff)
+    diff = np.abs(angle1 - angle2) % 360 # take the absolute difference of the angles. Phi angles in STOPGAP are sometimes not modulo 360
+    wrap = np.minimum(diff, 360 - diff) #
     return wrap
 
 # To calculate and plot a specific angle
