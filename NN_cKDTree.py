@@ -92,3 +92,74 @@ for i, (key, df) in enumerate(dataframes.items()):
     plt.tight_layout()
     plt.show()
 """"
+
+""""
+DENSITY ESTIMATION
+
+center_sphere = np.array([512, 512, 256]) * pixel_size
+radius = 17 * pixel_size
+volume_sphere = (4/3) * np.pi * radius**3
+
+def is_particle_inside_subvolume(coords, center, radius):
+    distances = np.sum((coords - center) ** 2, axis=1)
+    inside = distances <= radius ** 2
+    return(inside)
+
+subvolume_particles = {key: is_particle_inside_subvolume(df[['orig_x', 'orig_y', 'orig_z']].values * pixel_size,
+                                                         center_sphere, radius=radius) for key, df in dataframes.items()}
+particle_count_dict = {key: np.sum(subvolume_particles[key]) for key in subvolume_particles}
+density_dict = {key: particle_count / volume_sphere for key, particle_count in particle_count_dict.items()}
+
+
+
+def compute_nearest_neighbors_and_angles(coords, angles):
+    tree = cKDTree(coords)
+    distances, indices = tree.query(coords, k=2)  # Find 2 nearest neighbors (including self)
+    angles_diff = np.minimum(np.abs(np.diff(angles[indices], axis=1)) % 360, 360 - (np.abs(np.diff(angles[indices], axis=1)) % 360)) # Calculate angle differences
+    return distances[:, 1], angles_diff[:, 0]
+
+distances_dict = {}
+mean_dist_dict = {}
+angles_dict = {}
+for key, df in dataframes.items():
+    subvolume_coords = df[subvolume_particles[key]][['orig_x', 'orig_y', 'orig_z']].values * pixel_size
+    subvolume_angles = df[subvolume_particles[key]][['phi', 'psi', 'the']].values
+    distances, angles = compute_nearest_neighbors_and_angles(subvolume_coords, subvolume_angles)
+    distances_dict[key] = distances
+    mean_dist_dict[key] = np.mean(distances)
+    angles_dict[key] = angles
+
+
+sns.set(style="white", palette="muted", color_codes=True)
+angle_labels = ['phi', 'psi', 'theta']
+angle_colors = ['r', 'g', 'b']
+
+fig, axes = plt.subplots(len(dataframes), 2, figsize=(12, 4 * len(dataframes)))
+
+for idx, key in enumerate(distances_dict):
+    ax_distance = axes[idx, 0]
+    sns.kdeplot(distances_dict[key], fill=True, color="b", ax=ax_distance,
+                label=f'Particles: {particle_count_dict[key]}\nDensity: {density_dict[key]*10**12:.0f}/$\mu$m³', warn_singular=False)
+    ax_distance.axvline(mean_dist_dict[key], color='r', linestyle='dashed', label=f'Mean: {mean_dist_dict[key]:.2f} Å')
+    ax_distance.set_xlabel('Distance (Å)')
+    ax_distance.set_ylabel('Density')
+    ax_distance.set_title(f'{key}')
+    ax_distance.legend(fontsize=8)
+
+
+    ax_angle = axes[idx, 1]
+    for angle_idx, angle_label in enumerate(angle_labels):
+        sns.kdeplot(angles_dict[key][:, angle_idx], fill=True, color=angle_colors[angle_idx],
+                    label=angle_label.capitalize(), ax=ax_angle, warn_singular=False)
+    ax_angle.set_xlabel('Angle Difference (°)')
+    ax_angle.set_ylabel('Density')
+    ax_angle.set_title(f'{key}')
+    ax_angle.legend()
+
+plt.tight_layout()
+# plt.savefig('densityEstimationRadius17px.png')
+plt.show()
+
+""""
+
+
