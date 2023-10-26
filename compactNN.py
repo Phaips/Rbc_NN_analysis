@@ -4,16 +4,16 @@ import starfile
 from scipy.spatial import cKDTree
 import seaborn as sns
 
+path = "/scicore/home/engel0006/vysamu91/chlorellaRbc/pytom/PyTOM/all_motl/particles.star"
+tomo = starfile.read(path)
+
+dataframes = {tomo_num: df.reset_index(drop=True) for tomo_num, df in tomo.groupby('ptmMicrographName')}
+
 pixel_size = 10
 k_values = range(2, 6)
 
 colormap = plt.get_cmap('tab10')
 colors = [colormap(i) for i in range(len(k_values))]
-
-path = "/scicore/home/engel0006/vysamu91/chlorellaRbc/pytom/PyTOM/all_motl/particles.star"
-tomo = starfile.read(path)
-
-dataframes = {tomo_num: df.reset_index(drop=True) for tomo_num, df in tomo.groupby('ptmMicrographName')}
 
 distances_dict = {}
 for key, df in dataframes.items():
