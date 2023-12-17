@@ -4,7 +4,7 @@ import starfile
 from scipy.spatial import cKDTree
 import seaborn as sns
 
-path = "/scicore/home/engel0006/vysamu91/chlorellaRbc/pytom/PyTOM/all_motl/particles.star"
+path = "/.../all_motl/particles.star"
 tomo = starfile.read(path)
 
 dataframes = {tomo_num: df.reset_index(drop=True) for tomo_num, df in tomo.groupby('ptmMicrographName')}
