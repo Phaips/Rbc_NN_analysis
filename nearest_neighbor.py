@@ -4,11 +4,11 @@ import starfile
 from scipy.spatial import cKDTree
 import seaborn as sns
 
-# Give path to your motive list - depending on the format (RELION, WARP/M, STOPGAP PYTOM etc.) adjust the "tomo_num" and "angle" names
+# Give path to your motive/particle list - depending on the format (RELION, WARP/M, STOPGAP PYTOM etc.) adjust the "tomo_num" and "angle" names
 path = "/.../all_motl/particles.star"
 tomo = starfile.read(path)
 
-dataframes = {tomo_num: df.reset_index(drop=True) for tomo_num, df in tomo.groupby('ptmMicrographName')} # rlnMicrographName or tomo_num 
+dataframes = {tomo_num: df.reset_index(drop=True) for tomo_num, df in tomo.groupby('ptmMicrographName')} # Adjust accordingly to your motive list (i.e. rlnMicrographName or tomo_num)
 
 # Pixel/Voxel size at your tomogram binning
 pixel_size = 7.84
@@ -19,8 +19,8 @@ colors = [colormap(i) for i in range(len(k_values))]
 
 distances_dict = {}
 for key, df in dataframes.items():
-    coords = df[['ptmCoordinateX', 'ptmCoordinateY', 'ptmCoordinateZ']].values * pixel_size
-    tree = cKDTree(coords)
+    coords = df[['ptmCoordinateX', 'ptmCoordinateY', 'ptmCoordinateZ']].values * pixel_size # Adjust accordingly (i.e. rlnCoordinateX, orig_x, etc.)
+    tree = cKDTree(coords) # Binary trees are fast! :)
     distances, _ = tree.query(coords, k=max(k_values))
     
     distances_dict[key] = {f'distance_k{k}': distances[:, k-1] for k in k_values}
