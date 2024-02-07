@@ -4,13 +4,15 @@ import starfile
 from scipy.spatial import cKDTree
 import seaborn as sns
 
+# Give path to your motive list - depending on the format (RELION, WARP/M, STOPGAP PYTOM etc.) adjust the "tomo_num" and "angle" names
 path = "/.../all_motl/particles.star"
 tomo = starfile.read(path)
 
-dataframes = {tomo_num: df.reset_index(drop=True) for tomo_num, df in tomo.groupby('ptmMicrographName')}
+dataframes = {tomo_num: df.reset_index(drop=True) for tomo_num, df in tomo.groupby('ptmMicrographName')} # rlnMicrographName or tomo_num 
 
-pixel_size = 10
-k_values = range(2, 6)
+# Pixel/Voxel size at your tomogram binning
+pixel_size = 7.84
+k_values = range(2, 6) # this will plot the first 4 neighbor (nearest, second nearest, etc.) change to desired number (always start at 2!)
 
 colormap = plt.get_cmap('tab10')
 colors = [colormap(i) for i in range(len(k_values))]
@@ -34,11 +36,11 @@ for idx, key in enumerate(distances_dict):
     ax_distance.set_xlabel('Distance (Å)')
     ax_distance.set_ylabel('Density')
     ax_distance.set_title(f'Distances for tomo {key}')
-    ax_distance.set_xlim(20, 500)
+    ax_distance.set_xlim(20, 500) # Adjust accordingly
     ax_distance.legend()
     
-    angle_columns = ['ptmAngleRot', 'ptmAngleTilt', 'ptmAnglePsi']
-    angle_names = ['Rot', 'Tilt', 'Psi']
+    angle_columns = ['ptmAngleRot', 'ptmAngleTilt', 'ptmAnglePsi'] # Change accordingly (i.e. rlnAngleRot, orig_x)
+    angle_names = ['Rot', 'Tilt', 'Psi'] # Also this depends on the voncention! sometimes Phi or Psi are switched or differently labeled!
     for angle_idx, angle_col in enumerate(angle_columns):
         ax_angle = axes[idx, angle_idx + 1]
         dataframes[key][angle_col].hist(ax=ax_angle, bins=30, color=colors[angle_idx], alpha=0.7)
