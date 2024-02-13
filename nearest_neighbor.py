@@ -4,7 +4,7 @@ import starfile
 from scipy.spatial import cKDTree
 import seaborn as sns
 
-# Give path to your motive/particle list - depending on the format (RELION, WARP/M, STOPGAP PYTOM etc.) adjust the "tomo_num" and "angle" names
+# Give path to your motive/particle list - depending on the format (RELION, WARP/M, STOPGAP, PYTOM etc.) adjust the "tomo_num" and "angle" names
 path = "/.../all_motl/particles.star"
 tomo = starfile.read(path)
 
