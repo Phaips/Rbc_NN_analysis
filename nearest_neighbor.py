@@ -16,7 +16,7 @@ dataframes = {tomo_num: df.reset_index(drop=True)
 
 # Pixel/Voxel size at your tomogram binning
 pixel_size = 7.84
-k_values = range(2, 6) # this will plot the first 4 neighbor (nearest, second nearest, etc.) change to desired number (always start at 2!)
+k_values = range(2, 6) # This will plot the first 4 neighbors (nearest, second nearest, etc.). Change to the desired number (always start at 2!)
 
 colormap = plt.get_cmap('tab10')
 colors = [colormap(i) for i in range(len(k_values))]
@@ -26,13 +26,13 @@ for key, df in dataframes.items():
     coords = df[['ptmCoordinateX', 'ptmCoordinateY', 'ptmCoordinateZ']].values * pixel_size # Adjust accordingly (i.e. rlnCoordinateX, orig_x, etc.)
     tree = cKDTree(coords) # Binary trees are fast! :)
     distances, _ = tree.query(coords, k=max(k_values))
-    
     distances_dict[key] = {f'distance_k{k}': distances[:, k-1] for k in k_values}
 
 fig, axes = plt.subplots(len(dataframes), 4, figsize=(20, 4 * len(dataframes)))
 
 for idx, key in enumerate(distances_dict):
     ax_distance = axes[idx, 0]
+  
     for k in k_values:
         distances_k = distances_dict[key][f'distance_k{k}']
         sns.kdeplot(distances_k, 
@@ -48,7 +48,7 @@ for idx, key in enumerate(distances_dict):
     ax_distance.legend()
     
     angle_columns = ['ptmAngleRot', 'ptmAngleTilt', 'ptmAnglePsi'] # Change accordingly (i.e. rlnAngleRot, orig_x)
-    angle_names = ['Rot', 'Tilt', 'Psi'] # Also this depends on the voncention! sometimes Phi or Psi are switched or differently labeled!
+    angle_names = ['Rot', 'Tilt', 'Psi'] # Also this depends on the convention! sometimes Phi or Psi are switched or differently labeled!
     for angle_idx, angle_col in enumerate(angle_columns):
         ax_angle = axes[idx, angle_idx + 1]
         dataframes[key][angle_col].hist(ax=ax_angle, 
