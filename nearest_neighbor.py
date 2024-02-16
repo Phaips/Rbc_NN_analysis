@@ -2,7 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import starfile
 from scipy.spatial import cKDTree
-import seaborn as sns
 
 """
 Give path to your starfile motive/particle list
@@ -23,34 +22,44 @@ colors = [colormap(i) for i in range(len(k_values))]
 
 distances_dict = {}
 for key, df in dataframes.items():
-    coords = df[['ptmCoordinateX', 'ptmCoordinateY', 'ptmCoordinateZ']].values * pixel_size # Adjust accordingly (i.e. rlnCoordinateX, orig_x, etc.)
+    coords = df[['ptmCoordinateX', 'ptmCoordinateY', 'ptmCoordinateZ']].values * pixel_size # Adjust accordingly (i.e. rlnCoordinateX, orig_x, etc.) !!!
     tree = cKDTree(coords) # Binary trees are fast! :)
     distances, _ = tree.query(coords, k=max(k_values))
     distances_dict[key] = {f'distance_k{k}': distances[:, k-1] for k in k_values}
 
-fig, axes = plt.subplots(len(dataframes), 4, figsize=(20, 4 * len(dataframes)))
+
+n_tomograms = len(dataframes)
+# One distance and three angle plots
+n_columns = 4
+n_rows = n_tomograms  # One row per tomogram
+
+fig, axes = plt.subplots(n_rows, n_columns, figsize=(20, 4 * n_rows))
+if n_tomograms == 1:
+    axes = np.array([axes])
 
 for idx, key in enumerate(distances_dict):
-    ax_distance = axes[idx, 0]
-  
-    for k in k_values:
+    ax_distance = axes[idx, 0] if n_tomograms > 1 else axes[0]
+    
+    for k, color in zip(k_values, colors):
         distances_k = distances_dict[key][f'distance_k{k}']
-        sns.kdeplot(distances_k, 
-                    fill=True, 
-                    color=colors[k-2],
-                    ax=ax_distance, 
-                    label=f'k={k}: {np.mean(distances_k):.2f}Å ± {np.std(distances_k):.2f}Å')
+        ax_distance.hist(distances_k, 
+                         bins=100, 
+                         color=color, 
+                         alpha=0.5, 
+                         edgecolor='black',
+                         linewidth=0.5,
+                         label=f'k={k}: {np.mean(distances_k):.2f}Å ± {np.std(distances_k):.2f}Å')
         
     ax_distance.set_xlabel('Distance (Å)')
-    ax_distance.set_ylabel('Density')
+    ax_distance.set_ylabel('Count')
     ax_distance.set_title(f'Distances for tomo {key}')
-    ax_distance.set_xlim(20, 500) # Adjust accordingly
+    ax_distance.set_xlim(100, 400) # Adjust based on your data range
     ax_distance.legend()
     
-    angle_columns = ['ptmAngleRot', 'ptmAngleTilt', 'ptmAnglePsi'] # Change accordingly (i.e. rlnAngleRot, orig_x)
-    angle_names = ['Rot', 'Tilt', 'Psi'] # Also this depends on the convention! sometimes Phi or Psi are switched or differently labeled!
+    angle_columns = ['ptmAngleRot', 'ptmAngleTilt', 'ptmAnglePsi'] # Change angle name accordingly (i.e. rlnAngleRot, orig_x) !!!
+    angle_names = ['Rot', 'Tilt', 'Psi']
     for angle_idx, angle_col in enumerate(angle_columns):
-        ax_angle = axes[idx, angle_idx + 1]
+        ax_angle = axes[idx, angle_idx + 1] if n_tomograms > 1 else axes[angle_idx + 1]
         dataframes[key][angle_col].hist(ax=ax_angle, 
                                         bins=30, 
                                         color=colors[angle_idx], 
