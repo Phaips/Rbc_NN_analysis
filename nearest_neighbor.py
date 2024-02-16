@@ -57,7 +57,7 @@ for idx, key in enumerate(distances_dict):
     ax_distance.legend()
     
     angle_columns = ['ptmAngleRot', 'ptmAngleTilt', 'ptmAnglePsi'] # Change angle name accordingly (i.e. rlnAngleRot, orig_x) !!!
-    angle_names = ['Rot', 'Tilt', 'Psi']
+    angle_names = ['Rot', 'Tilt', 'Psi'] # This could be different depending on the Euler angle convention !!!
     for angle_idx, angle_col in enumerate(angle_columns):
         ax_angle = axes[idx, angle_idx + 1] if n_tomograms > 1 else axes[angle_idx + 1]
         dataframes[key][angle_col].hist(ax=ax_angle, 
