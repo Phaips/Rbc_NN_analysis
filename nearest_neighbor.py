@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 import starfile
 from scipy.spatial import cKDTree
 from scipy.stats import gaussian_kde
-
 ordinal = lambda n: f"{n}{'th' if 11<=n%100<=13 else {1:'st',2:'nd',3:'rd'}.get(n%10,'th')}"
 
 star_path   = "path/to/particles.star"
@@ -31,10 +30,7 @@ colors    = [cmap(i) for i in range(len(neighbors))]
 for tomo, dmat in dist.items():
     coords_t = coords[tomo]
     tree     = cKDTree(coords_t)
-
-    fig, ax = plt.subplots(1, 4, figsize=(20, 4))
-
-    # 1) histogram of raw NN distances
+    fig, ax  = plt.subplots(1, 4, figsize=(20, 4))
     labels0 = []
     for j, col in zip(neighbors, colors):
         vals = dmat[:, j]
@@ -46,8 +42,6 @@ for tomo, dmat in dist.items():
         labels0.append(f"{ordinal(j-1)} NN: {peak0:.1f}±{std:.1f}Å")
     ax[0].set(title=tomo, xlabel="Distance (Å)", ylabel="Count", xlim=xlim)
     ax[0].legend(labels0, loc='upper right')
-
-    # 2) KDE over histogram
     labels1 = []
     x_vals = np.linspace(xlim[0], xlim[1], 200)
     for j, col in zip(neighbors, colors):
@@ -60,8 +54,6 @@ for tomo, dmat in dist.items():
         labels1.append(f"{ordinal(j-1)} NN: {peak1:.1f}±{std:.1f}Å")
     ax[1].set(title=tomo, xlabel="Distance (Å)", ylabel="Density", xlim=xlim)
     ax[1].legend(labels1, loc='upper right')
-
-    # 3) neighbor‐counts within given radii (clustered boxplot)
     counts = []
     for r_A in radii_A:
         nb_lists = tree.query_ball_point(coords_t, r_A)
@@ -83,7 +75,6 @@ for tomo, dmat in dist.items():
     ax[2].set_xticklabels([f"{r} nm" for r in radii_nm], fontweight='bold')
     ax[2].set(title="Neighbor Counts", xlabel="Radius", ylabel="Count")
 
-    # 4) radial distribution function (RDF)
     bins = np.arange(0, rdf_r_max + rdf_dr, rdf_dr)
     hist = np.zeros(len(bins)-1)
     for c0 in coords_t:
