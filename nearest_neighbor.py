@@ -7,9 +7,9 @@ from scipy.spatial import cKDTree
 from scipy.stats import gaussian_kde
 ordinal = lambda n: f"{n}{'th' if 11<=n%100<=13 else {1:'st',2:'nd',3:'rd'}.get(n%10,'th')}"
 
-star_path = "/scicore/home/engel0006/vysamu91/aretomo3/chlorella/rln5/tm/out/particles.star"
-k_max = 6
-xlim = (50, 250)
+star_path = "path/to/particles.star"
+k_max = 6 # number of NN
+xlim = (50, 250) # scale to your likeing
 
 df = starfile.read(star_path)
 coords = {t: g[["rlnCenteredCoordinateXAngst",
