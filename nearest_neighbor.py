@@ -8,6 +8,7 @@ from scipy.stats import gaussian_kde
 ordinal = lambda n: f"{n}{'th' if 11<=n%100<=13 else {1:'st',2:'nd',3:'rd'}.get(n%10,'th')}"
 
 star_path   = "path/to/particles.star"
+
 k_max       = 8                        # number of NN
 xlim        = (100, 300)                # adjust to your likeing
 rdf_r_max, rdf_dr = 800, 20            # up to distance in Å, increment in Å
