@@ -8,9 +8,9 @@ from scipy.stats import gaussian_kde
 ordinal = lambda n: f"{n}{'th' if 11<=n%100<=13 else {1:'st',2:'nd',3:'rd'}.get(n%10,'th')}"
 
 star_path   = "path/to/particles.star"
-k_max       = 6                        # number of NN
-xlim        = (80, 500)                # adjust to your likeing
-rdf_r_max, rdf_dr = 500, 10            # up to distance in Å, increment in Å
+k_max       = 8                        # number of NN
+xlim        = (100, 300)                # adjust to your likeing
+rdf_r_max, rdf_dr = 800, 20            # up to distance in Å, increment in Å
 radii_nm = [15, 20, 25, 30, 35, 40]    # radii for neighbor‐counts plot in nm
 radii_A  = [r * 10 for r in radii_nm]  # (nm → Å)
 
@@ -73,7 +73,7 @@ for tomo, dmat in dist.items():
         patch.set_alpha(0.8)
     ax[2].set_xticks(positions)
     ax[2].set_xticklabels([f"{r} nm" for r in radii_nm], fontweight='bold')
-    ax[2].set(title="Neighbor Counts", xlabel="Radius", ylabel="Count")
+    ax[2].set(title="Neighbor Counts", xlabel="Radius", ylabel="Count", ylim=(0,140))
 
     bins = np.arange(0, rdf_r_max + rdf_dr, rdf_dr)
     hist = np.zeros(len(bins)-1)
@@ -82,10 +82,10 @@ for tomo, dmat in dist.items():
         dists = np.linalg.norm(coords_t[idx] - c0, axis=1)
         hist += np.histogram(dists[dists>0], bins=bins)[0]
     shellA = (4/3) * np.pi * (bins[1:]**3 - bins[:-1]**3)
-    local_density = hist / (2 * len(coords_t) * (shellA / 1e12))
+    local_density = hist / (2 * len(coords_t) * (shellA / 1e7))
     r_centers     = 0.5 * (bins[:-1] + bins[1:])
     ax[3].plot(r_centers, local_density)
-    ax[3].set(title="RDF", xlabel="Distance (Å)", ylabel="Local density", xlim=xlim)
+    ax[3].set(title="RDF", xlabel="Distance (Å)", ylabel="Local density")
 
     plt.tight_layout()
     plt.show()
